@@ -24,11 +24,22 @@ app.get('/api/quotes', (req, res, next) => {
     if (!req.query.person) {
        quotes.forEach(element => {arrayQuotes.push(element.quote)}) 
        res.send(arrayQuotes)
-    } else {
-        //console.log(req.query.person)
+    } else { // if ?person= query is given: it will send the quotes if the person exists or send an empy array of it does not
         quotes.filter(element => {  return (element.person === req.query.person) })
         .forEach(element => {arrayQuotes.push(element.quote)});
-        //console.log(arrayQuotes)
         res.send(arrayQuotes)    
+    }
+})
+
+app.post('/api/quotes', (req, res, next) => {
+    // Query string look like this: "?person=Steve Jobs&quote=Stay Hungry, Stay Foolish"
+    const person = req.query.person;
+    const quote = req.query.quote;
+    if (person && quote) {
+        const newQuote = { quote: quote, person: person};
+        quotes.push(newQuote)
+        res.send(newQuote.quote)
+    } else {
+        req.status(400).send('Bad Request');
     }
 })
